@@ -43,7 +43,6 @@ import org.apache.skywalking.plugin.test.agent.tool.validator.entity.Segment;
 import org.apache.skywalking.plugin.test.agent.tool.validator.entity.SegmentItem;
 import org.apache.skywalking.plugin.test.agent.tool.validator.entity.SegmentRef;
 import org.apache.skywalking.plugin.test.agent.tool.validator.entity.Span;
-import org.apache.skywalking.plugin.test.agent.tool.validator.exception.AssertFailedException;
 
 public class SegmentAssert {
     public static void assertEquals(SegmentItem expected, SegmentItem actual) {
@@ -83,18 +82,15 @@ public class SegmentAssert {
             throw new SpanSizeNotEqualsException(excepted.size(), (actual != null) ? actual.size() : 0);
         }
 
-        int equalSpans = 0;
-        for (int index = 0; index < excepted.size(); index++, equalSpans++) {
-            Span exceptedSpan = excepted.get(index);
-            Span actualSpan = actual.get(index);
-            try {
-                spanEquals(exceptedSpan, actualSpan);
-            } catch (AssertFailedException e) {
-                throw new SpanAssertFailedException(e, exceptedSpan, actualSpan);
-            }
-        }
-
-        return true;
+        return excepted.stream()
+                .allMatch(expectedSpan -> actual.stream().anyMatch(actualSpan -> {
+                    try {
+                        spanEquals(expectedSpan, actualSpan);
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                }));
     }
 
     private static void spanEquals(Span excepted, Span actualSpan) {
