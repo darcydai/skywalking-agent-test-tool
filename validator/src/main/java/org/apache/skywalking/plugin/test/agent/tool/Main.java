@@ -45,7 +45,7 @@ public class Main {
             File actualData = new File(casePath, "actualData.yaml");
             File expectedData = new File(casePath, "expectedData.yaml");
 
-            log.info("actualData data is [{}]", IOUtils.toString(new FileReader(actualData)));
+            log.error("actualData data is [{}]", IOUtils.toString(new FileReader(actualData)));
 
             if (actualData.exists() && expectedData.exists()) {
                 try {
