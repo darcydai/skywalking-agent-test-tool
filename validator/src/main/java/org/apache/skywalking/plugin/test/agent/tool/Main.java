@@ -18,7 +18,10 @@
 package org.apache.skywalking.plugin.test.agent.tool;
 
 import java.io.File;
+import java.io.FileReader;
+
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.core.util.IOUtils;
 import org.apache.skywalking.plugin.test.agent.tool.validator.assertor.DataAssert;
 import org.apache.skywalking.plugin.test.agent.tool.validator.entity.Data;
 import org.apache.skywalking.plugin.test.agent.tool.validator.exception.AssertFailedException;
@@ -41,6 +44,8 @@ public class Main {
             log.info("start to assert data of test case[{}]", ConfigHelper.caseName());
             File actualData = new File(casePath, "actualData.yaml");
             File expectedData = new File(casePath, "expectedData.yaml");
+
+            log.info("actualData data is [{}]", IOUtils.toString(new FileReader(actualData)));
 
             if (actualData.exists() && expectedData.exists()) {
                 try {
